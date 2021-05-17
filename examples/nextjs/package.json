@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-flake-example",
+  "name": "nextjs-flake-determined-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@sightread/flake": "../../../flake-determined",
+    "@sightread/flake-determined": "../../../flake-determined",
     "next": "10.1.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",

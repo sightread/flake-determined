@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { css, mediaQuery } from "../flake";
+import { css, mediaQuery } from "@sightread/flake-determined";
 
 const flake = css({
   container: {
@@ -115,16 +115,6 @@ const flake = css({
   },
 });
 
-// // import { css, mediaQuery } from "@sightread/flake";
-
-// export default function WrappedHome() {
-//   return (
-//     <FlakeProvider>
-//       <Home />
-//     </FlakeProvider>
-//   );
-// }
-
 export default function Home() {
   return (
     <div className={flake.classes.container}>
@@ -132,8 +122,9 @@ export default function Home() {
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {flake.tag}
-
+      <Head>
+        <style>{flake.append}</style>
+      </Head>
       <main className={flake.classes.main}>
         <h1 className={flake.classes.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>

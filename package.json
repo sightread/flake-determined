@@ -18,9 +18,9 @@
     "typescript"
   ],
   "bugs": {
-    "url": "https://github.com/sightread/flake/issues"
+    "url": "https://github.com/sightread/flake-determined/issues"
   },
-  "homepage": "https://github.com/sightread/flake",
+  "homepage": "https://github.com/sightread/flake-determined",
   "browserslist": {
     "production": [
       ">2%",
