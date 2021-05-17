@@ -15,16 +15,18 @@ type StringMap = {
 type CSSReturnType = {
   classes: StringMap;
   append: string;
+  id: string;
 };
 
 const store = new Set<string>();
 
-function css(styleObj: StyleObject): CSSReturnType {
-  return compile(styleObj, store);
+function css(styleObj: StyleObject, cacheClasses = true): CSSReturnType {
+  return compile(styleObj, cacheClasses ? store : new Set());
 }
 
 function compile(styleObj: StyleObject, store: Set<string>): CSSReturnType {
   let cssString = "";
+  let id = "";
   const classes: StringMap = {};
 
   Object.keys(styleObj).forEach((key) => {
@@ -40,9 +42,10 @@ function compile(styleObj: StyleObject, store: Set<string>): CSSReturnType {
       store.add(className);
     }
     classes[key] = className;
+    id += className;
   });
-
-  return { append: cssString, classes };
+  const hash_id = str_hash(id);
+  return { append: cssString, classes, id: hash_id.toString() };
 }
 
 function getHash(styles: StyleObjectValues) {
