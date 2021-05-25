@@ -40,9 +40,9 @@ function compile(styleObj: StyleObject, store: Set<string>): CSSReturnType {
         cssString += `.${className}{${directRules}}`;
       }
       store.add(className);
+      id += className;
     }
     classes[key] = className;
-    id += className;
   });
   const hash_id = str_hash(id);
   return { append: cssString, classes, id: hash_id.toString() };
