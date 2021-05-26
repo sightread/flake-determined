@@ -24,27 +24,39 @@ $ yarn add @sightread/flake-determined
 
 ## Usage
 
-flakecss will bundle and insert all calls into a single target element.
+```javascript
+import { css } from "@sightread/flake-determined";
 
-### In the root of your app
+const flake = css({
+  ...
+},
+// optional second arg (default true) for caching classes
+true | false | undefined
+)
+```
 
-No root configuration needed.
-
-### In your components
-
-css function returns the classes as well as the css string to insert yourself. Since the classes are deterministic, multiple instances of a component will only return the append string once. After the first addition of a component, append will be an empty string.
+calling `css` function returns an object:
 
 ```javascript
-import { css, mediaQuery } from "@sightread/flake-determined";
+  {
+    // key, value mapping with [your key]: class name string
+    classes :  { ... },
+    // the css string compiled from the css definitions
+    append: "",
+    // a hash key that corresponds to the append css string.
+    id: ""
+  }
+```
+
+Example:
+
+```javascript
+import { css } from "@sightread/flake-determined";
 
 const flake = css({
   headerItem: {
     color: "blue",
     fontSize: "24px",
-  },
-  headerSecondary: {
-    color: "red",
-    fontSize: "16px",
   },
 });
 
@@ -54,17 +66,96 @@ function MyComponent() {
   return (
     <div>
       <h1 className={flake.classes.headerItem}>It works!</h1>
-      <h2 className={flake.classes.headerSecondary}>(hopefully)</h2>
-      {/* or:
-        {flake.append && <style>{flake.append}</style>}
-      */}
-      <style>{flake.append}</style>
+      {flake.append && <style>{flake.append}</style>}
     </div>
   );
 }
 ```
 
-With nextjs:
+`css` function returns the classes as well as the css string to insert yourself. Since the classes are deterministic, multiple instances of a component will only return the append string once. After the first addition of a component, append will be an empty string. Also individual class definitions are cached so multiple calls to `css` with the same definitions will not return css.
+
+This is done by creating a hash for each class definition. If this hash key has been seen before, the css string does not have to be added again.
+
+Example:
+
+```javascript
+import { css } from "@sightread/flake-determined";
+
+const flake = css({
+  button: {
+    backgroundColor: "white"
+    border: "1px solid lightgrey",
+    borderRadius: 5,
+    fontSize: 15,
+  },
+  header: {
+    color: "blue",
+    fontSize: "24px",
+  },
+});
+
+function MyComponent1() {
+  // ... react stuff
+
+  return (
+    <div>
+      <style>{flake.append}</style>
+      <h1 className={flake.classes.header}>It works!</h1>
+      <button className={flake.classes.button}>Click me</button>
+      {/* or:
+        {flake.append && <style>{flake.append}</style>}
+      */}
+    </div>
+  );
+}
+
+/* since the definition of
+header: {
+  color: "blue",
+  fontSize: "24px"
+}
+has been seen before, this call to css will
+return {
+  ...
+  classes: {
+    header: "header-[hash]"
+  }
+  append: "",
+  id: 0,
+}
+*/
+const flake2 = css({
+  header: {
+    color: "blue",
+    fontSize: "24px",
+  },
+})
+
+function OtherHeader() {
+  return (
+    <>
+      {flake.append && <style>{flake.append}</style>}
+      <h2 className={flake.classes.header}>It works too!</h2>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <div>
+      <MyComponent1/>
+      <OtherHeader/>
+  </div>)
+}
+```
+
+### Turn off caching
+
+If you would like to tell flake to always return a full `append` string, pass `false` as a second argument to `css`.
+
+### With nextjs
+
+A convenient way to return style tags in the dom is to use `Head` with the flake id as the key.
 
 ```javascript
 import Head from "next/head"
@@ -76,7 +167,7 @@ function MyComponent() {
     <div>
       {/* same as previous example */}
       <Head>
-        <style>{flake.append}</style>
+        <style key={flake.id}>{flake.append}</style>
       </Head>
     </div>
   );
@@ -204,8 +295,6 @@ function MyComponent() {
   );
 }
 ```
-
-## Limitations
 
 ## License
 
